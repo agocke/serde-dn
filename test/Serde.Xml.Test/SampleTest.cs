@@ -16,44 +16,44 @@ namespace Serde.Xml.Test;
    a null reference. */
 [GenerateSerialize]
 [XmlRootAttribute("PurchaseOrder", Namespace="http://www.cpandl.com", IsNullable = false)]
-public partial class PurchaseOrder
+public partial record PurchaseOrder
 {
-   public Address ShipTo;
-   public string OrderDate;
+   public Address ShipTo = null!;
+   public string OrderDate = null!;
    /* The XmlArrayAttribute changes the XML element name
     from the default of "OrderedItems" to "Items". */
    [SerdeMemberOptions(Rename = "Items")]
-   public OrderedItem[] OrderedItems;
+   public OrderedItem[] OrderedItems = null!;
    public decimal SubTotal;
    public decimal ShipCost;
    public decimal TotalCost;
 }
 
 [GenerateSerialize]
-public partial class Address
+public partial record Address
 {
    /* The XmlAttribute instructs the XmlSerializer to serialize the Name
       field as an XML attribute instead of an XML element (the default
       behavior). */
    [XmlAttribute]
    [SerdeMemberOptions(ProvideAttributes = true)]
-   public string Name;
-   public string Line1;
+   public string Name = null!;
+   public string Line1 = null!;
 
    /* Setting the IsNullable property to false instructs the
       XmlSerializer that the XML attribute will not appear if
       the City field is set to a null reference. */
    [XmlElementAttribute(IsNullable = false)]
-   public string City;
-   public string State;
-   public string Zip;
+   public string? City;
+   public string State = null!;
+   public string Zip = null!;
 }
 
 [GenerateSerialize]
-public partial class OrderedItem
+public partial record OrderedItem
 {
-   public string ItemName;
-   public string Description;
+   public string ItemName = null!;
+   public string Description = null!;
    public decimal UnitPrice;
    public int Quantity;
    public decimal LineTotal;
@@ -68,7 +68,7 @@ public partial class OrderedItem
 
 public class SampleTest
 {
-   private const string Expected = """
+    private const string Expected = """
 <?xml version="1.0" encoding="utf-8"?>
 <PurchaseOrder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.cpandl.com">
     <ShipTo Name="Teresa Atkinson">
@@ -92,17 +92,16 @@ public class SampleTest
     <TotalCost>28.2</TotalCost>
 </PurchaseOrder>
 """;
-   private const string ExpectedFixed = """
+    private const string ExpectedFixed = """
 <PurchaseOrder>
-  <ShipTo>
-    <Name>Teresa Atkinson</Name>
+  <ShipTo Name="Teresa Atkinson">
     <Line1>1 Main St.</Line1>
     <City>AnyTown</City>
     <State>WA</State>
     <Zip>00000</Zip>
   </ShipTo>
   <OrderDate>Thursday, January 1, 1970</OrderDate>
-  <OrderedItems>
+  <Items>
     <OrderedItem>
       <ItemName>Widget S</ItemName>
       <Description>Small widget</Description>
@@ -110,41 +109,44 @@ public class SampleTest
       <Quantity>3</Quantity>
       <LineTotal>15.69</LineTotal>
     </OrderedItem>
-  </OrderedItems>
+  </Items>
   <SubTotal>15.69</SubTotal>
   <ShipCost>12.51</ShipCost>
   <TotalCost>28.20</TotalCost>
 </PurchaseOrder>
 """;
 
-   [Fact]
-   public void VerifySerialize()
+   private static PurchaseOrder MakeSample()
    {
       // Create an instance of the XmlSerializer class;
       // specify the type of object to serialize.
       PurchaseOrder po = new PurchaseOrder();
 
       // Create an address to ship and bill to.
-      Address billAddress = new Address();
-      billAddress.Name = "Teresa Atkinson";
-      billAddress.Line1 = "1 Main St.";
-      billAddress.City = "AnyTown";
-      billAddress.State = "WA";
-      billAddress.Zip = "00000";
+      var billAddress = new Address() 
+      {
+         Name = "Teresa Atkinson",
+         Line1 = "1 Main St.",
+         City = "AnyTown",
+         State = "WA",
+         Zip = "00000",
+      };
       // Set ShipTo and BillTo to the same addressee.
       po.ShipTo = billAddress;
       po.OrderDate = System.DateTime.UnixEpoch.ToLongDateString();
 
       // Create an OrderedItem object.
-      OrderedItem i1 = new OrderedItem();
-      i1.ItemName = "Widget S";
-      i1.Description = "Small widget";
-      i1.UnitPrice = (decimal) 5.23;
-      i1.Quantity = 3;
+      var i1 = new OrderedItem()
+      {
+         ItemName = "Widget S",
+         Description = "Small widget",
+         UnitPrice = (decimal) 5.23,
+         Quantity = 3,
+      };
       i1.Calculate();
 
       // Insert the item into the array.
-      OrderedItem [] items = {i1};
+      var items = new[] { i1 };
       po.OrderedItems = items;
       // Calculate the total cost.
       decimal subTotal = new decimal();
@@ -155,9 +157,16 @@ public class SampleTest
       po.SubTotal = subTotal;
       po.ShipCost = (decimal) 12.51;
       po.TotalCost = po.SubTotal + po.ShipCost;
+      return po;
+   }
 
+   private static readonly PurchaseOrder SamplePo = MakeSample();
+
+   [Fact]
+   public void VerifySerialize()
+   {
       // Serialize the purchase order, and close the TextWriter.
-      var actual = XmlSerializer.Serialize(po);
+      var actual = XmlSerializer.Serialize(SamplePo);
       Assert.Equal(ExpectedFixed, actual);
    }
 

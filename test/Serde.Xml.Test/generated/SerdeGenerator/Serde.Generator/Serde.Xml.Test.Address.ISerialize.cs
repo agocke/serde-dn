@@ -4,7 +4,7 @@ using Serde;
 
 namespace Serde.Xml.Test
 {
-    partial class Address : Serde.ISerialize
+    partial record Address : Serde.ISerialize
     {
         void Serde.ISerialize.Serialize(ISerializer serializer)
         {
@@ -13,7 +13,7 @@ namespace Serde.Xml.Test
             {}, new Serde.SerdeMemberOptions()
             {ProvideAttributes = true}});
             type.SerializeField("Line1", new StringWrap(this.Line1));
-            type.SerializeField("City", new StringWrap(this.City));
+            type.SerializeField("City", new NullableRefWrap.SerializeImpl<string, StringWrap>(this.City));
             type.SerializeField("State", new StringWrap(this.State));
             type.SerializeField("Zip", new StringWrap(this.Zip));
             type.End();

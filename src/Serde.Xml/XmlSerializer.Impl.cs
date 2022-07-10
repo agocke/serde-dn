@@ -47,12 +47,12 @@ partial class XmlSerializer : ISerializer, IDisposable
 
     void ISerializer.SerializeNotNull<T>(T t)
     {
-        throw new NotImplementedException();
+        t.Serialize(this);
     }
 
     void ISerializer.SerializeNull()
     {
-        throw new NotImplementedException();
+        _writer.WriteString(null);
     }
 
     ISerializeType ISerializer.SerializeType(string name, int numFields)

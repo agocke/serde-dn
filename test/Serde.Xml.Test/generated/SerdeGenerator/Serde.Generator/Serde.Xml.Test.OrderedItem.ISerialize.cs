@@ -4,7 +4,7 @@ using Serde;
 
 namespace Serde.Xml.Test
 {
-    partial class OrderedItem : Serde.ISerialize
+    partial record OrderedItem : Serde.ISerialize
     {
         void Serde.ISerialize.Serialize(ISerializer serializer)
         {
