@@ -295,6 +295,65 @@ namespace Serde
         }
     }
 
+    public readonly partial record struct DoubleWrap(double Value)
+        : ISerializeWrap<double, DoubleWrap>, ISerialize, IDeserialize<double>
+    {
+        public static DoubleWrap Create(double d) => new DoubleWrap(d);
+        void Serde.ISerialize.Serialize(ISerializer serializer)
+        {
+            serializer.SerializeDouble(Value);
+        }
+        static double Serde.IDeserialize<double>.Deserialize<D>(ref D deserializer)
+        {
+            var visitor = new SerdeVisitor();
+            return deserializer.DeserializeDouble<double, SerdeVisitor>(visitor);
+        }
+
+        private sealed class SerdeVisitor : Serde.IDeserializeVisitor<double>
+        {
+            public string ExpectedTypeName => "double";
+            double IDeserializeVisitor<double>.VisitByte(byte b)    => b;
+            double IDeserializeVisitor<double>.VisitU16(ushort u16) => u16;
+            double IDeserializeVisitor<double>.VisitU32(uint u32)   => u32;
+            double IDeserializeVisitor<double>.VisitU64(ulong u64)  => Convert.ToDouble(u64);
+            double IDeserializeVisitor<double>.VisitSByte(sbyte b)  => b;
+            double IDeserializeVisitor<double>.VisitI16(short i16)  => i16;
+            double IDeserializeVisitor<double>.VisitI32(int i32)    => i32;
+            double IDeserializeVisitor<double>.VisitI64(long i64)   => Convert.ToDouble(i64);
+            double IDeserializeVisitor<double>.VisitFloat(float f) => f;
+            double IDeserializeVisitor<double>.VisitDouble(double d) => d;
+        }
+    }
+
+    public readonly partial record struct DecimalWrap(decimal Value)
+        : ISerializeWrap<decimal, DecimalWrap>, ISerialize, IDeserialize<decimal>
+    {
+        public static DecimalWrap Create(decimal d) => new DecimalWrap(d);
+        void Serde.ISerialize.Serialize(ISerializer serializer)
+        {
+            serializer.SerializeDecimal(Value);
+        }
+        static decimal Serde.IDeserialize<decimal>.Deserialize<D>(ref D deserializer)
+        {
+            var visitor = new SerdeVisitor();
+            return deserializer.DeserializeDecimal<decimal, SerdeVisitor>(visitor);
+        }
+
+        private sealed class SerdeVisitor : Serde.IDeserializeVisitor<decimal>
+        {
+            public string ExpectedTypeName => "double";
+            decimal IDeserializeVisitor<decimal>.VisitByte(byte b)    => b;
+            decimal IDeserializeVisitor<decimal>.VisitU16(ushort u16) => u16;
+            decimal IDeserializeVisitor<decimal>.VisitU32(uint u32)   => u32;
+            decimal IDeserializeVisitor<decimal>.VisitU64(ulong u64)  => u64;
+            decimal IDeserializeVisitor<decimal>.VisitSByte(sbyte b)  => b;
+            decimal IDeserializeVisitor<decimal>.VisitI16(short i16)  => i16;
+            decimal IDeserializeVisitor<decimal>.VisitI32(int i32)    => i32;
+            decimal IDeserializeVisitor<decimal>.VisitI64(long i64)   => i64;
+            decimal IDeserializeVisitor<decimal>.VisitFloat(float f) => Convert.ToDecimal(f);
+            decimal IDeserializeVisitor<decimal>.VisitDouble(double d) => Convert.ToDecimal(d);
+        }
+    }
     public readonly partial record struct StringWrap(string Value)
         : ISerializeWrap<string, StringWrap>, ISerialize, IDeserialize<string>
     {

@@ -46,7 +46,16 @@ public sealed class SerdeMemberOptions : Attribute
 {
     public bool NullIfMissing { get; init; } = false;
 
+    /// <summary>
+    /// Use the given name instead of the name of the field or property.
+    /// </summary>
     public string? Rename { get; init; } = null;
+
+    /// <summary>
+    /// If true, the source generator will pass down the attributes from the member to the
+    /// serializer.
+    /// </summary>
+    public bool ProvideAttributes { get; init; } = false;
 }
 
 public enum MemberFormat : byte

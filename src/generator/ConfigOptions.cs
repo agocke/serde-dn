@@ -16,6 +16,8 @@ internal readonly record struct MemberOptions()
     public bool NullIfMissing { get; init; } = false;
 
     public string? Rename { get; init; } = null;
+
+    public bool ProvideAttributes { get; init; } = false;
 }
 
 // Keep in sync with copy in serde

@@ -105,6 +105,14 @@ namespace Serde.Json
             return v.VisitDouble(d);
         }
 
+        public T DeserializeDecimal<T, V>(V v) where V : class, IDeserializeVisitor<T>
+        {
+            var reader = GetReader();
+            var d = reader.GetDecimal();
+            _readerState = reader.CurrentState;
+            return v.VisitDecimal(d);
+        }
+
         public T DeserializeEnumerable<T, V>(V v) where V : class, IDeserializeVisitor<T>
         {
             var reader = GetReader();

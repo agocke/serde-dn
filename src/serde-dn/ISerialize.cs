@@ -1,4 +1,6 @@
-﻿namespace Serde;
+﻿using System;
+
+namespace Serde;
 
 public interface ISerialize
 {
@@ -8,8 +10,10 @@ public interface ISerialize
 public interface ISerializeType
 {
     void SerializeField<T>(string name, T value) where T : ISerialize;
-    void End();
+    void SerializeField<T>(string name, T value, ReadOnlySpan<Attribute> attributes) where T : ISerialize
+        => SerializeField(name, value);
     void SkipField(string name) { }
+    void End();
 }
 
 public interface ISerializeEnumerable
@@ -39,6 +43,7 @@ public interface ISerializer
     void SerializeI64(long i64);
     void SerializeFloat(float f);
     void SerializeDouble(double d);
+    void SerializeDecimal(decimal d);
     void SerializeString(string s);
     void SerializeNull();
     void SerializeNotNull<T>(T t) where T : notnull, ISerialize;

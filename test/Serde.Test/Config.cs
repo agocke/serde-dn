@@ -1,12 +1,6 @@
-
-using System;
-using System.Collections.Immutable;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
-using NuGet.Frameworks;
 
 namespace Serde.Test
 {
@@ -19,6 +13,7 @@ namespace Serde.Test
 				Path.Combine ("ref", "net7.0"))
 			.WithNuGetConfigFilePath (Path.Combine (
                 GetDirectoryPath(),
+                "..",
                 "..",
                 "NuGet.config"));
 

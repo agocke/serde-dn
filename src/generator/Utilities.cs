@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Serde
 {
@@ -17,6 +18,28 @@ namespace Serde
         {
             key = kvp.Key;
             value = kvp.Value;
+        }
+
+        public static IEnumerable<U> SelectNotNull<T, U>(this IEnumerable<T> en, Func<T, U?> f) where U : class
+        {
+            foreach (var item in en.Select(f))
+            {
+                if (item is not null)
+                {
+                    yield return item;
+                }
+            }
+        }
+
+        public static IEnumerable<U> SelectNotNull<T, U>(this IEnumerable<T> en, Func<T, U?> f) where U : struct
+        {
+            foreach (var item in en.Select(f))
+            {
+                if (item is U u)
+                {
+                    yield return u;
+                }
+            }
         }
     }
 }

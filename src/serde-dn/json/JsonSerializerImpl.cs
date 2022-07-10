@@ -44,6 +44,8 @@ namespace Serde.Json
 
         public void SerializeDouble(double d) => _writer.WriteNumberValue(d);
 
+        public void SerializeDecimal(decimal d) => _writer.WriteNumberValue(d);
+
         public void SerializeString(string s) => _writer.WriteStringValue(s);
         public void SerializeNull() => _writer.WriteNullValue();
 
@@ -152,6 +154,8 @@ namespace Serde.Json
             public void SerializeFloat(float f) => throw new KeyNotStringException();
 
             public void SerializeDouble(double d) => throw new KeyNotStringException();
+
+            public void SerializeDecimal(decimal d) => throw new KeyNotStringException();
 
             public void SerializeString(string s)
             {

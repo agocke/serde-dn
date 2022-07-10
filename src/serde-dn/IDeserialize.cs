@@ -50,6 +50,7 @@ namespace Serde
         T VisitI64(long i64) => throw new InvalidDeserializeValueException("Expected type " + ExpectedTypeName);
         T VisitFloat(float f) => VisitDouble(f);
         T VisitDouble(double d) => throw new InvalidDeserializeValueException("Expected type " + ExpectedTypeName);
+        T VisitDecimal(decimal d) => throw new InvalidDeserializeValueException("Expected type " + ExpectedTypeName);
         T VisitString(string s) => throw new InvalidDeserializeValueException("Expected type " + ExpectedTypeName);
         T VisitEnumerable<D>(ref D d) where D : IDeserializeEnumerable
             => throw new InvalidDeserializeValueException("Expected type " + ExpectedTypeName);
@@ -92,6 +93,7 @@ namespace Serde
         T DeserializeI64<T, V>(V v) where V : class, IDeserializeVisitor<T>;
         T DeserializeFloat<T, V>(V v) where V : class, IDeserializeVisitor<T>;
         T DeserializeDouble<T, V>(V v) where V : class, IDeserializeVisitor<T>;
+        T DeserializeDecimal<T, V>(V v) where V : class, IDeserializeVisitor<T>;
         T DeserializeString<T, V>(V v) where V : class, IDeserializeVisitor<T>;
         T DeserializeIdentifier<T, V>(V v) where V : class, IDeserializeVisitor<T>;
         T DeserializeType<T, V>(string typeName, ReadOnlySpan<string> fieldNames, V v) where V : class, IDeserializeVisitor<T>;

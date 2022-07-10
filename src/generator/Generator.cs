@@ -69,6 +69,7 @@ namespace Serde
             SpecialType.System_Int64 => "I64",
             SpecialType.System_Single => "Float",
             SpecialType.System_Double => "Double",
+            SpecialType.System_Decimal => "Decimal",
             _ => null
         };
 

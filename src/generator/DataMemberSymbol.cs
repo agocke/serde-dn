@@ -47,6 +47,10 @@ namespace Serde
 
         public bool NullIfMissing => _memberOptions.NullIfMissing;
 
+        public bool ProvideAttributes => _memberOptions.ProvideAttributes;
+
+        public ImmutableArray<AttributeData> Attributes => _symbol.GetAttributes();
+
         /// <summary>
         /// Retrieves the name of the member after formatting options are applied.
         /// </summary>

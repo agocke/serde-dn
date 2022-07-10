@@ -328,5 +328,56 @@ partial record R : Serde.IDeserialize<R>
 }
 """);
         }
+
+        [Fact]
+        public Task AttributeWrapperTest()
+        {
+            var src = @"
+using Serde;
+using System;
+using System.Xml;
+using System.Xml.Serialization;
+
+[GenerateSerialize]
+public partial class Address
+{
+   /* The XmlAttribute instructs the XmlSerializer to serialize the Name
+      field as an XML attribute instead of an XML element (the default
+      behavior). */
+   [XmlAttribute]
+   [SerdeMemberOptions(ProvideAttributes = true)]
+   public string Name;
+   public string Line1;
+
+   /* Setting the IsNullable property to false instructs the
+      XmlSerializer that the XML attribute will not appear if
+      the City field is set to a null reference. */
+   [XmlElementAttribute(IsNullable = false)]
+   public string City;
+   public string State;
+   public string Zip;
+}";
+            return VerifyGeneratedCode(src, new[] { ("Address.ISerialize", """
+
+#nullable enable
+using Serde;
+
+partial class Address : Serde.ISerialize
+{
+    void Serde.ISerialize.Serialize(ISerializer serializer)
+    {
+        var type = serializer.SerializeType("Address", 5);
+        type.SerializeField("Name", new StringWrap(this.Name), new System.Attribute[]{new System.Xml.Serialization.XmlAttributeAttribute()
+        {}, new Serde.SerdeMemberOptions()
+        {ProvideAttributes = true}});
+        type.SerializeField("Line1", new StringWrap(this.Line1));
+        type.SerializeField("City", new StringWrap(this.City));
+        type.SerializeField("State", new StringWrap(this.State));
+        type.SerializeField("Zip", new StringWrap(this.Zip));
+        type.End();
+    }
+}
+""") });
+        }
     }
 }

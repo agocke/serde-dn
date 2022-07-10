@@ -63,6 +63,13 @@ namespace Serde
                                     Type.SpecialType: SpecialType.System_String
                                 }
                             } => options with { Rename = (string)value },
+                            {
+                                Key: nameof(MemberOptions.ProvideAttributes),
+                                Value: {
+                                    Kind: TypedConstantKind.Primitive,
+                                    Type.SpecialType: SpecialType.System_Boolean
+                                }
+                            } => options with { ProvideAttributes = (bool)value },
                             _ => options
                         };
                     }
